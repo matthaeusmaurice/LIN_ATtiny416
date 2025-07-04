@@ -28,7 +28,7 @@
 #define UART_BAUD_SELECT            ((F_CPU / (16UL * LIN_BAUD)) - 1)
 #define PARAM_COUNT                 8
 #define SEED_KEY_LENGTH             4
-#define EEPROM_DEFAULT_VALUE        {2025, 1, 1, 0, 0, 0, 0, 0} 
+#define EEPROM_ADDR                 ((uint8_t*)0x00)
 
 // --------- Modes ---------
 typedef enum 
@@ -79,8 +79,19 @@ typedef struct
     uint8_t status;
 } LINFrame_t;
 
+// LIN error flags structure 
+typedef struct 
+{
+    bool frameError;
+    bool parityError;
+    bool bufferOverflow;
+} LinErrorFlags_t;
+LinErrorFlags_t linErrors = {0};
+
 // Global parameter instance
 DeviceParams_t g_params;
+uint8_t g_seed[SEED_KEY_LENGTH] = {0x33, 0x66, 0x99, 0xCC}; // example
+uint8_t g_key[SEED_KEY_LENGTH];
 
 /*******************************************************************************
  * 3. CRC-8 LIN
@@ -126,7 +137,7 @@ void load_params_from_eeprom(DeviceParams_t *p)
     // Check if EEPROM is uninitialized and set default values 
     if (p->year == 0xFFFF)
     {
-        DeviceParams_t default_params = EEPROM_DEFAULT_VALUE;
+        DeviceParams_t default_params = {2025, 1, 1, 0, 0, 0, 0, 0};
         save_params_to_eeprom(&default_params);
         *p = default_params;
     }
@@ -136,49 +147,61 @@ void load_params_from_eeprom(DeviceParams_t *p)
  * 5. UART/LIN Initialization
  ******************************************************************************/
 
-void uart_init(void)
+void lin_pin_config(void)
+{
+    PORTA.DIRSET = PIN1_bm;
+    PORTA.PIN1CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
+}
+
+void lin_usart_init(void)
 {
     USART0.BAUD = UART_BAUD_SELECT;
-    USART0.CTRLB = USART_TXEN_bm | USART_RXEN_bm;
-    USART0.CTRLA = USART_RXCIE_bm;
+    USART0.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
+    USART0.CTRLC = USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_EVEN_gc;
+    USART0.CTRLA |= USART_RXCIE_bm;
 }
 
 void uart_send(uint8_t data)
 {
-    while(!(USART0.STATUS & USART_DREIF_bm));
+    while (!(USART0.STATUS & USART_DREIF_bm));
     USART0.TXDATAL = data;
 }
 
 uint8_t uart_receive(void)
 {
-    while (!(USART0.STATUS & USART_RXCIF_bm));
+    while (!(USART0.STATUS & USART_DREIF_bm));
     return USART0.RXDATAL;
 }
-
 /*******************************************************************************
  * 6. LIN Frame Construction and Dispatch
  ******************************************************************************/
 
+void check_lin_errors(void)
+{
+    uint8_t status = USART0.RXDATAH;
+    linErrors.frameError = (status & USART_FERR_bm);
+    linErrors.parityError = (status & USART_PERR_bm);
+    linErrors.bufferOverflow = (status & USART_BUFOVF_bm);
+}
+
+bool validate_lin_frame(uint8_t *data)
+{
+    check_lin_errors();
+    if (linErrors.frameError || linErrors.parityError || linErrors.bufferOverflow)
+        return false;
+    return (lin_crc8(&data[3], 4) == data[0]);
+}
+
 void send_lin_frame(LINFrame_t *frame)
 {
-    uint8_t raw[8];
-    raw[0] = frame->crc;
-    raw[1] = 0x00; // reserved
-    raw[2] = 0x00; // reserved
-    for (int i = 0; i < 4; i++)
-        raw[3 + i] = frame->payload[i];
-    raw[7] = frame->status;
-    
-    for (int i = 0; i < 8; i++)
-        uart_send(raw[i]);
+    uint8_t raw[8] = {frame->crc, 0x00, 0x00, frame->payload[0], 
+        frame->payload[1], frame->payload[2], frame->payload[3], frame->status};
+    for (int i = 0; i < 8; i++) uart_send(raw[i]);
 }
 
 /*******************************************************************************
  * 7. Seed & Key Challenge Authentication
  ******************************************************************************/
-
-uint8_t g_seed[SEED_KEY_LENGTH] = {0x33, 0x66, 0x99, 0xCC}; // example
-uint8_t g_key[SEED_KEY_LENGTH];
 
 void generate_seed(void)
 {
@@ -201,8 +224,6 @@ bool validate_key(uint8_t *key)
 
 void handle_command(uint8_t cmd, uint8_t *payload)
 {
-    if (cmd < 1 || cmd > 5) return;
-    
     switch (cmd)
     {
         case 1: // Factory write 
@@ -220,8 +241,6 @@ void handle_command(uint8_t cmd, uint8_t *payload)
         case 5: // Send seed
             generate_seed();
             send_lin_frame((LINFrame_t*)g_seed);
-            break;
-        default:
             break;
     }
 }
@@ -265,20 +284,16 @@ ISR(USART0_RXC_vect)
 {
     static uint8_t buffer[8];
     static uint8_t index = 0;
+
+    buffer[index++] = USART0.RXDATAL;
     
-    if (index < sizeof(buffer))
-    {
-        buffer[index++] = USART0.RXDATAL;
-    }
-    
-    if (index >= sizeof(buffer))
+    if (index >= 8)
     {
         index = 0;
-        uint8_t crc = lin_crc8(&buffer[3], 4);
-        if (crc == buffer[0])
-        {
+        if (validate_lin_frame(buffer))
             handle_command(buffer[7] & 0x07, &buffer[3]);
-        }
+        else 
+            fallback_timeout_handler();
     }
 }
 
@@ -289,7 +304,8 @@ ISR(USART0_RXC_vect)
 void system_init(void)
 {
     cli();
-    uart_init();
+    lin_pin_config();
+    lin_usart_init();
     crcscan_init();
     load_params_from_eeprom(&g_params);
     sei();
