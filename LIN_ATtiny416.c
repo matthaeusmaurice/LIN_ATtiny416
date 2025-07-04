@@ -28,6 +28,7 @@
 #define UART_BAUD_SELECT            ((F_CPU / (16UL * LIN_BAUD)) - 1)
 #define PARAM_COUNT                 8
 #define SEED_KEY_LENGTH             4
+#define EEPROM_DEFAULT_VALUE        {2025, 1, 1, 0, 0, 0, 0, 0} 
 
 // --------- Modes ---------
 typedef enum 
@@ -121,6 +122,14 @@ void save_params_to_eeprom(DeviceParams_t *p)
 void load_params_from_eeprom(DeviceParams_t *p)
 {
     eeprom_read_block((void *)p, EEPROM_ADDR, sizeof(DeviceParams_t));
+    
+    // Check if EEPROM is uninitialized and set default values 
+    if (p->year == 0xFFFF)
+    {
+        DeviceParams_t default_params = EEPROM_DEFAULT_VALUE;
+        save_params_to_eeprom(&default_params);
+        *p = default_params;
+    }
 }
 
 /*******************************************************************************
@@ -192,6 +201,8 @@ bool validate_key(uint8_t *key)
 
 void handle_command(uint8_t cmd, uint8_t *payload)
 {
+    if (cmd < 1 || cmd > 5) return;
+    
     switch (cmd)
     {
         case 1: // Factory write 
@@ -255,9 +266,12 @@ ISR(USART0_RXC_vect)
     static uint8_t buffer[8];
     static uint8_t index = 0;
     
-    buffer[index++] = USART0.RXDATAL;
+    if (index < sizeof(buffer))
+    {
+        buffer[index++] = USART0.RXDATAL;
+    }
     
-    if (index >= 8)
+    if (index >= sizeof(buffer))
     {
         index = 0;
         uint8_t crc = lin_crc8(&buffer[3], 4);
