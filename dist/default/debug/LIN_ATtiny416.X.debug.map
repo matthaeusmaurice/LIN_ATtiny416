@@ -470,26 +470,26 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x32d6
+.debug_info     0x0000000000000000     0x32dd
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x0000000000000000     0x19c7 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
- .debug_info    0x00000000000019c7     0x1222 build/default/debug/LIN_ATtiny416.o
- .debug_info    0x0000000000002be9      0x631 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
- .debug_info    0x000000000000321a       0xbc C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
+ .debug_info    0x00000000000019c7     0x1229 build/default/debug/LIN_ATtiny416.o
+ .debug_info    0x0000000000002bf0      0x631 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
+ .debug_info    0x0000000000003221       0xbc C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
 
-.debug_abbrev   0x0000000000000000     0x1d2f
+.debug_abbrev   0x0000000000000000     0x1d26
  *(.debug_abbrev)
  .debug_abbrev  0x0000000000000000     0x1864 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
- .debug_abbrev  0x0000000000001864      0x314 build/default/debug/LIN_ATtiny416.o
- .debug_abbrev  0x0000000000001b78      0x1a3 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
- .debug_abbrev  0x0000000000001d1b       0x14 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
+ .debug_abbrev  0x0000000000001864      0x30b build/default/debug/LIN_ATtiny416.o
+ .debug_abbrev  0x0000000000001b6f      0x1a3 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
+ .debug_abbrev  0x0000000000001d12       0x14 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
 
-.debug_line     0x0000000000000000      0x7f2
+.debug_line     0x0000000000000000      0x817
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x0000000000000000      0x136 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
- .debug_line    0x0000000000000136      0x4e0 build/default/debug/LIN_ATtiny416.o
- .debug_line    0x0000000000000616      0x17c C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
- .debug_line    0x0000000000000792       0x60 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
+ .debug_line    0x0000000000000136      0x505 build/default/debug/LIN_ATtiny416.o
+ .debug_line    0x000000000000063b      0x17c C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
+ .debug_line    0x00000000000007b7       0x60 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
 
 .debug_frame    0x0000000000000000      0x220
  *(.debug_frame)
@@ -502,10 +502,10 @@ END GROUP
  .debug_str     0x0000000000000ab9       0x42 build/default/debug/LIN_ATtiny416.o
  .debug_str     0x0000000000000afb        0xc C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
 
-.debug_loc      0x0000000000000000      0x597
+.debug_loc      0x0000000000000000      0x5df
  *(.debug_loc)
- .debug_loc     0x0000000000000000      0x421 build/default/debug/LIN_ATtiny416.o
- .debug_loc     0x0000000000000421      0x176 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
+ .debug_loc     0x0000000000000000      0x469 build/default/debug/LIN_ATtiny416.o
+ .debug_loc     0x0000000000000469      0x176 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eewr_block_xmega.o)
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -541,14 +541,14 @@ LOAD data_init
  .note.gnu.avr.deviceinfo
                 0x0000000000000000       0x3c C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
 
-.bss.buffer.3625
+.bss.buffer.3626
                 0x0000000000803f18        0x8
- .bss.buffer.3625
+ .bss.buffer.3626
                 0x0000000000803f18        0x8 build/default/debug/LIN_ATtiny416.o
 
-.bss.index.3626
+.bss.index.3627
                 0x0000000000803f27        0x1
- .bss.index.3626
+ .bss.index.3627
                 0x0000000000803f27        0x1 build/default/debug/LIN_ATtiny416.o
 
 .bss.g_params   0x0000000000803f00       0x18
@@ -577,191 +577,191 @@ LOAD data_init
                 0x0000000000000096                eeprom_write_block
 
 .text.__vector_22
-                0x0000000000000116       0x7a
+                0x0000000000000116       0x7e
  .text.__vector_22
-                0x0000000000000116       0x7a build/default/debug/LIN_ATtiny416.o
+                0x0000000000000116       0x7e build/default/debug/LIN_ATtiny416.o
                 0x0000000000000116                __vector_22
 
-.text.send_lin_frame
-                0x0000000000000190       0x64
- .text.send_lin_frame
-                0x0000000000000190       0x64 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000190                send_lin_frame
-
 .text.load_params_from_eeprom
-                0x00000000000001f4       0x60
+                0x0000000000000194       0x68
  .text.load_params_from_eeprom
-                0x00000000000001f4       0x60 build/default/debug/LIN_ATtiny416.o
-                0x00000000000001f4                load_params_from_eeprom
+                0x0000000000000194       0x68 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000194                load_params_from_eeprom
+
+.text.send_lin_frame
+                0x00000000000001fc       0x64
+ .text.send_lin_frame
+                0x00000000000001fc       0x64 build/default/debug/LIN_ATtiny416.o
+                0x00000000000001fc                send_lin_frame
 
 .text.handle_command
-                0x0000000000000254       0x54
+                0x0000000000000260       0x54
  .text.handle_command
-                0x0000000000000254       0x54 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000254                handle_command
+                0x0000000000000260       0x54 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000260                handle_command
 
 .text.validate_lin_frame
-                0x00000000000002a8       0x42
+                0x00000000000002b4       0x42
  .text.validate_lin_frame
-                0x00000000000002a8       0x42 build/default/debug/LIN_ATtiny416.o
-                0x00000000000002a8                validate_lin_frame
+                0x00000000000002b4       0x42 build/default/debug/LIN_ATtiny416.o
+                0x00000000000002b4                validate_lin_frame
 
 .text.validate_key
-                0x00000000000002ea       0x36
+                0x00000000000002f6       0x36
  .text.validate_key
-                0x00000000000002ea       0x36 build/default/debug/LIN_ATtiny416.o
-                0x00000000000002ea                validate_key
+                0x00000000000002f6       0x36 build/default/debug/LIN_ATtiny416.o
+                0x00000000000002f6                validate_key
 
-.text.lin_crc8  0x0000000000000320       0x32
+.text.lin_crc8  0x000000000000032c       0x32
  .text.lin_crc8
-                0x0000000000000320       0x32 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000320                lin_crc8
+                0x000000000000032c       0x32 build/default/debug/LIN_ATtiny416.o
+                0x000000000000032c                lin_crc8
 
 .text.libgcc.prologue
-                0x0000000000000352       0x32
+                0x000000000000035e       0x32
  .text.libgcc.prologue
-                0x0000000000000352       0x32 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_prologue.o)
-                0x0000000000000352                __prologue_saves__
+                0x000000000000035e       0x32 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_prologue.o)
+                0x000000000000035e                __prologue_saves__
 
 .text.libgcc.prologue
-                0x0000000000000384       0x30
+                0x0000000000000390       0x30
  .text.libgcc.prologue
-                0x0000000000000384       0x30 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_epilogue.o)
-                0x0000000000000384                __epilogue_restores__
+                0x0000000000000390       0x30 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/avrxmega3/short-calls\libgcc.a(_epilogue.o)
+                0x0000000000000390                __epilogue_restores__
 
 .text.check_lin_errors
-                0x00000000000003b4       0x22
+                0x00000000000003c0       0x22
  .text.check_lin_errors
-                0x00000000000003b4       0x22 build/default/debug/LIN_ATtiny416.o
-                0x00000000000003b4                check_lin_errors
+                0x00000000000003c0       0x22 build/default/debug/LIN_ATtiny416.o
+                0x00000000000003c0                check_lin_errors
+
+.text.main      0x00000000000003e2       0x22
+ .text.main     0x00000000000003e2       0x22 build/default/debug/LIN_ATtiny416.o
+                0x00000000000003e2                main
 
 .text.lin_usart_init
-                0x00000000000003d6       0x1c
+                0x0000000000000404       0x1c
  .text.lin_usart_init
-                0x00000000000003d6       0x1c build/default/debug/LIN_ATtiny416.o
-                0x00000000000003d6                lin_usart_init
+                0x0000000000000404       0x1c build/default/debug/LIN_ATtiny416.o
+                0x0000000000000404                lin_usart_init
 
-.rodata         0x00000000008083f2       0x18 load address 0x00000000000003f2
- .rodata        0x00000000008083f2       0x18 build/default/debug/LIN_ATtiny416.o
-
-.text.main      0x000000000000040a       0x18
- .text.main     0x000000000000040a       0x18 build/default/debug/LIN_ATtiny416.o
-                0x000000000000040a                main
+.rodata         0x0000000000808420       0x18 load address 0x0000000000000420
+ .rodata        0x0000000000808420       0x18 build/default/debug/LIN_ATtiny416.o
 
 .text.generate_seed
-                0x0000000000000422       0x16
+                0x0000000000000438       0x16
  .text.generate_seed
-                0x0000000000000422       0x16 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000422                generate_seed
+                0x0000000000000438       0x16 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000438                generate_seed
 
-.text.memcpy    0x0000000000000438       0x16
- .text.memcpy   0x0000000000000438       0x16 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(memcpy.o)
-                0x0000000000000438                memcpy
+.text.memcpy    0x000000000000044e       0x16
+ .text.memcpy   0x000000000000044e       0x16 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(memcpy.o)
+                0x000000000000044e                memcpy
 
 .text.system_init
-                0x000000000000044e       0x12
+                0x0000000000000464       0x12
  .text.system_init
-                0x000000000000044e       0x12 build/default/debug/LIN_ATtiny416.o
-                0x000000000000044e                system_init
+                0x0000000000000464       0x12 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000464                system_init
 
 .text.lin_pin_config
-                0x0000000000000460       0x10
+                0x0000000000000476       0x10
  .text.lin_pin_config
-                0x0000000000000460       0x10 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000460                lin_pin_config
+                0x0000000000000476       0x10 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000476                lin_pin_config
 
 .text.uart_send
-                0x0000000000000470       0x10
+                0x0000000000000486       0x10
  .text.uart_send
-                0x0000000000000470       0x10 build/default/debug/LIN_ATtiny416.o
-                0x0000000000000470                uart_send
-
-.text.crcscan_init
-                0x0000000000000480        0xe
- .text.crcscan_init
-                0x0000000000000480        0xe build/default/debug/LIN_ATtiny416.o
-                0x0000000000000480                crcscan_init
-
-.text.exit      0x000000000000048e        0xe
- .text.exit     0x000000000000048e        0xe c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x000000000000048e                exit
+                0x0000000000000486       0x10 build/default/debug/LIN_ATtiny416.o
+                0x0000000000000486                uart_send
 
 .text.save_params_to_eeprom
-                0x000000000000049c        0xc
+                0x0000000000000496        0xe
  .text.save_params_to_eeprom
-                0x000000000000049c        0xc build/default/debug/LIN_ATtiny416.o
-                0x000000000000049c                save_params_to_eeprom
+                0x0000000000000496        0xe build/default/debug/LIN_ATtiny416.o
+                0x0000000000000496                save_params_to_eeprom
+
+.text.crcscan_init
+                0x00000000000004a4        0xe
+ .text.crcscan_init
+                0x00000000000004a4        0xe build/default/debug/LIN_ATtiny416.o
+                0x00000000000004a4                crcscan_init
+
+.text.exit      0x00000000000004b2        0xe
+ .text.exit     0x00000000000004b2        0xe c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x00000000000004b2                exit
 
 .text.fallback_safe_reset
-                0x00000000000004a8        0xa
+                0x00000000000004c0        0xa
  .text.fallback_safe_reset
-                0x00000000000004a8        0xa build/default/debug/LIN_ATtiny416.o
-                0x00000000000004a8                fallback_safe_reset
+                0x00000000000004c0        0xa build/default/debug/LIN_ATtiny416.o
+                0x00000000000004c0                fallback_safe_reset
 
 .text.check_crc_ok
-                0x00000000000004b2        0x8
+                0x00000000000004ca        0x8
  .text.check_crc_ok
-                0x00000000000004b2        0x8 build/default/debug/LIN_ATtiny416.o
-                0x00000000000004b2                check_crc_ok
+                0x00000000000004ca        0x8 build/default/debug/LIN_ATtiny416.o
+                0x00000000000004ca                check_crc_ok
 
-.text.avrlibc   0x00000000000004ba        0x8
- .text.avrlibc  0x00000000000004ba        0x8 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
-                0x00000000000004ba                eeprom_read_block
+.text.avrlibc   0x00000000000004d2        0x8
+ .text.avrlibc  0x00000000000004d2        0x8 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls\libattiny416.a(eerd_block.o)
+                0x00000000000004d2                eeprom_read_block
 
-.text.abort     0x00000000000004c2        0x6
- .text.abort    0x00000000000004c2        0x6 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(abort.o)
-                0x00000000000004c2                abort
+.text.abort     0x00000000000004da        0x6
+ .text.abort    0x00000000000004da        0x6 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(abort.o)
+                0x00000000000004da                abort
 
-.text           0x00000000000004c8        0x2
- .text          0x00000000000004c8        0x2 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
-                0x00000000000004c8                __vector_1
-                0x00000000000004c8                __vector_24
-                0x00000000000004c8                __vector_12
-                0x00000000000004c8                __bad_interrupt
-                0x00000000000004c8                __vector_6
-                0x00000000000004c8                __vector_3
-                0x00000000000004c8                __vector_23
-                0x00000000000004c8                __vector_25
-                0x00000000000004c8                __vector_11
-                0x00000000000004c8                __vector_13
-                0x00000000000004c8                __vector_17
-                0x00000000000004c8                __vector_19
-                0x00000000000004c8                __vector_7
-                0x00000000000004c8                __vector_5
-                0x00000000000004c8                __vector_4
-                0x00000000000004c8                __vector_9
-                0x00000000000004c8                __vector_2
-                0x00000000000004c8                __vector_21
-                0x00000000000004c8                __vector_15
-                0x00000000000004c8                __vector_8
-                0x00000000000004c8                __vector_14
-                0x00000000000004c8                __vector_10
-                0x00000000000004c8                __vector_16
-                0x00000000000004c8                __vector_18
-                0x00000000000004c8                __vector_20
+.text           0x00000000000004e0        0x2
+ .text          0x00000000000004e0        0x2 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/ATtiny_DFP/3.2.268/xc8/avr/lib/avrxmega3/short-calls/crtattiny416.o
+                0x00000000000004e0                __vector_1
+                0x00000000000004e0                __vector_24
+                0x00000000000004e0                __vector_12
+                0x00000000000004e0                __bad_interrupt
+                0x00000000000004e0                __vector_6
+                0x00000000000004e0                __vector_3
+                0x00000000000004e0                __vector_23
+                0x00000000000004e0                __vector_25
+                0x00000000000004e0                __vector_11
+                0x00000000000004e0                __vector_13
+                0x00000000000004e0                __vector_17
+                0x00000000000004e0                __vector_19
+                0x00000000000004e0                __vector_7
+                0x00000000000004e0                __vector_5
+                0x00000000000004e0                __vector_4
+                0x00000000000004e0                __vector_9
+                0x00000000000004e0                __vector_2
+                0x00000000000004e0                __vector_21
+                0x00000000000004e0                __vector_15
+                0x00000000000004e0                __vector_8
+                0x00000000000004e0                __vector_14
+                0x00000000000004e0                __vector_10
+                0x00000000000004e0                __vector_16
+                0x00000000000004e0                __vector_18
+                0x00000000000004e0                __vector_20
 
 .text.__dummy_fini
-                0x00000000000004ca        0x2
+                0x00000000000004e2        0x2
  .text.__dummy_fini
-                0x00000000000004ca        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x00000000000004ca                _fini
+                0x00000000000004e2        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x00000000000004e2                _fini
 
 .text.__dummy_funcs_on_exit
-                0x00000000000004cc        0x2
+                0x00000000000004e4        0x2
  .text.__dummy_funcs_on_exit
-                0x00000000000004cc        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x00000000000004cc                __funcs_on_exit
+                0x00000000000004e4        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x00000000000004e4                __funcs_on_exit
 
 .text.__dummy_simulator_exit
-                0x00000000000004ce        0x2
+                0x00000000000004e6        0x2
  .text.__dummy_simulator_exit
-                0x00000000000004ce        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
-                0x00000000000004ce                __simulator_exit
+                0x00000000000004e6        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(exit.o)
+                0x00000000000004e6                __simulator_exit
 
-.text._Exit     0x00000000000004d0        0x2
- .text._Exit    0x00000000000004d0        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
-                0x00000000000004d0                _Exit
+.text._Exit     0x00000000000004e8        0x2
+ .text._Exit    0x00000000000004e8        0x2 c:/program files/microchip/xc8/v3.00/avr/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega3/short-calls\libc.a(_Exit.o)
+                0x00000000000004e8                _Exit
 
-.data.g_seed    0x0000000000803f20        0x4 load address 0x00000000000004d2
+.data.g_seed    0x0000000000803f20        0x4 load address 0x00000000000004ea
  .data.g_seed   0x0000000000803f20        0x4 build/default/debug/LIN_ATtiny416.o
                 0x0000000000803f20                g_seed

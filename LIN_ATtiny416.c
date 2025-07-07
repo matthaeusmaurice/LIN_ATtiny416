@@ -89,7 +89,7 @@ typedef struct
 LinErrorFlags_t linErrors = {0};
 
 // Global parameter instance
-DeviceParams_t g_params;
+DeviceParams_t g_params = {0};
 uint8_t g_seed[SEED_KEY_LENGTH] = {0x33, 0x66, 0x99, 0xCC}; // example
 uint8_t g_key[SEED_KEY_LENGTH];
 
@@ -125,12 +125,13 @@ uint8_t lin_crc8(uint8_t *data, uint8_t len)
 
 #define EEPROM_ADDR ((uint8_t*)0x00)
 
-void save_params_to_eeprom(DeviceParams_t *p)
+bool save_params_to_eeprom(DeviceParams_t *p)
 {
     eeprom_write_block((const void *)p, EEPROM_ADDR, sizeof(DeviceParams_t));
+    return true; // Return status
 }
 
-void load_params_from_eeprom(DeviceParams_t *p)
+bool load_params_from_eeprom(DeviceParams_t *p)
 {
     eeprom_read_block((void *)p, EEPROM_ADDR, sizeof(DeviceParams_t));
     
@@ -138,9 +139,13 @@ void load_params_from_eeprom(DeviceParams_t *p)
     if (p->year == 0xFFFF)
     {
         DeviceParams_t default_params = {2025, 1, 1, 0, 0, 0, 0, 0};
-        save_params_to_eeprom(&default_params);
-        *p = default_params;
+        if (save_params_to_eeprom(&default_params))
+        {
+            *p = default_params;
+            return true;
+        }
     }
+    return false; // Indicates if loading was successful
 }
 
 /*******************************************************************************
@@ -196,7 +201,10 @@ void send_lin_frame(LINFrame_t *frame)
 {
     uint8_t raw[8] = {frame->crc, 0x00, 0x00, frame->payload[0], 
         frame->payload[1], frame->payload[2], frame->payload[3], frame->status};
-    for (int i = 0; i < 8; i++) uart_send(raw[i]);
+    for (int i = 0; i < 8; i++)
+    {
+        uart_send(raw[i]);
+    }
 }
 
 /*******************************************************************************
@@ -213,7 +221,8 @@ bool validate_key(uint8_t *key)
 {
     for (uint8_t i = 0; i < SEED_KEY_LENGTH; i++)
     {
-        if (key[i] != (uint8_t)(~g_seed[i])) return false;
+        if (key[i] != (uint8_t)(~g_seed[i])) 
+            return false;
     }
     return true;
 }
@@ -227,20 +236,28 @@ void handle_command(uint8_t cmd, uint8_t *payload)
     switch (cmd)
     {
         case 1: // Factory write 
-            save_params_to_eeprom(&g_params);
+            if (!save_params_to_eeprom(&g_params)) // Check if save success
+            {
+                // Handle error
+            }
             break;
         case 2: // Switch to customer
             currentMode = MODE_CUSTOMER;
             break;
         case 3: // Customer read
-            if (parameterAccessGranted) send_lin_frame((LINFrame_t*)&g_params);
+            if (parameterAccessGranted) 
+                send_lin_frame((LINFrame_t*)&g_params);
             break;
         case 4: // Receive key
-            if (validate_key(payload)) parameterAccessGranted = true;
+            if (validate_key(payload)) 
+                parameterAccessGranted = true;
             break;
         case 5: // Send seed
             generate_seed();
             send_lin_frame((LINFrame_t*)g_seed);
+            break;
+        default:
+            // Handle invalid command
             break;
     }
 }
@@ -284,9 +301,12 @@ ISR(USART0_RXC_vect)
 {
     static uint8_t buffer[8];
     static uint8_t index = 0;
-
-    buffer[index++] = USART0.RXDATAL;
     
+    if (index < sizeof(buffer))
+    {
+        buffer[index++] = USART0.RXDATAL;
+    }
+
     if (index >= 8)
     {
         index = 0;
@@ -323,5 +343,7 @@ int main(void)
         }
         
         _delay_ms(200);
+        
+        WDT.CTRLA = WDT_PERIOD_8CLK_gc; // Reset watchdog timer
     }
 }
