@@ -21,6 +21,7 @@
 #include <util/delay.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 // --------- Constants ---------
 #define LIN_BAUD                    19200 
@@ -88,10 +89,16 @@ typedef struct
 } LinErrorFlags_t;
 LinErrorFlags_t linErrors = {0};
 
+// Global declarations
+volatile bool syncErrorDetected = false;
+
 // Global parameter instance
 DeviceParams_t g_params = {0};
 uint8_t g_seed[SEED_KEY_LENGTH] = {0x33, 0x66, 0x99, 0xCC}; // example
 uint8_t g_key[SEED_KEY_LENGTH];
+
+// Forward declaration
+void fallback_timeout_handler(void);
 
 /*******************************************************************************
  * 3. CRC-8 LIN
@@ -154,8 +161,8 @@ bool load_params_from_eeprom(DeviceParams_t *p)
 
 void lin_pin_config(void)
 {
-    PORTA.DIRSET = PIN1_bm;
-    PORTA.PIN1CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
+    PORTA.DIRCLR = PIN1_bm;
+    PORTA.PIN1CTRL |= PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
 }
 
 void lin_usart_init(void)
@@ -207,6 +214,16 @@ void send_lin_frame(LINFrame_t *frame)
     }
 }
 
+void send_seed_frame(void)
+{
+    LINFrame_t frame = {0};
+    for (uint8_t i = 0; i < 4; i++)
+        frame.payload[i] = g_seed[i];
+    frame.status = 0x00; // Can define later if needed
+    frame.crc = lin_crc8(&frame.payload[0], 4);
+    send_lin_frame(&frame);
+}
+
 /*******************************************************************************
  * 7. Seed & Key Challenge Authentication
  ******************************************************************************/
@@ -231,33 +248,109 @@ bool validate_key(uint8_t *key)
  * 8. Mode Switching and Command Handling
  ******************************************************************************/
 
-void handle_command(uint8_t cmd, uint8_t *payload)
+void handle_command(uint8_t *frame)
 {
+    uint8_t cmd         = frame[7] & 0x07;
+    uint8_t paramID     = (frame[7] >> 5) & 0x07;
+    uint8_t *payload    = &frame[3];
+    
     switch (cmd)
     {
         case 1: // Factory write 
-            if (!save_params_to_eeprom(&g_params)) // Check if save success
+            if (currentMode == MODE_FACTORY)
             {
-                // Handle error
+                uint8_t param_lengths[8] = {2, 1, 1, 4, 4, 4, 4, 4};
+                
+                if (paramID > 7)
+                {
+                    fallback_timeout_handler();
+                    return;
+                }
+                
+                void* dest = ((uint8_t*)&g_params) +
+                   (paramID == 0 ? 0 :
+                    paramID == 1 ? 2 :
+                    paramID == 2 ? 3 :
+                    4 + (paramID - 3) * 4);
+                
+                memcpy(dest, payload, param_lengths[paramID]);
             }
             break;
+            
         case 2: // Switch to customer
             currentMode = MODE_CUSTOMER;
+            parameterAccessGranted = false;
             break;
+            
         case 3: // Customer read
             if (parameterAccessGranted) 
-                send_lin_frame((LINFrame_t*)&g_params);
+            {
+                void* param_ptrs[8] = {
+                    &g_params.year, &g_params.month, &g_params.day,
+                    &g_params.module_id, &g_params.r25,
+                    &g_params.a, &g_params.b, &g_params.c
+                };
+                
+                uint8_t param_lengths[8] = {2, 1, 1, 4, 4, 4, 4, 4};
+                
+                for (uint8_t i = 0; i < 8; i++)
+                {
+                    LINFrame_t tx = {0};
+                    uint8_t *data = (uint8_t*)param_ptrs[i];
+                    
+                    for (uint8_t j = 0; j < 4; j++)
+                        tx.payload[j] = (j < param_lengths[i]) ? data[j] : 0x00;
+                    
+                    uint8_t sign = (tx.payload[3] & 0x80) ? 1 : 0;
+                    
+                    uint8_t status = (i << 5) |
+                            ((USART0.RXDATAH & USART_FERR_bm)  ? (1 << 4) : 0) |
+                            ((USART0.RXDATAH & USART_PERR_bm)  ? (1 << 3) : 0) |
+                            (syncErrorDetected                 ? (1 << 2) : 0) |
+                            ((USART0.RXDATAH & USART_BUFOVF_bm)? (1 << 1) : 0) |
+                            (sign);
+                    
+                    tx.status = status;
+                    tx.crc = lin_crc8(tx.payload, 4);
+                    send_lin_frame(&tx);
+                    _delay_ms(5);
+                }
+            }
+            else 
+            {
+                fallback_timeout_handler(); // Unauthorized access attempt
+            }
             break;
+            
         case 4: // Receive key
-            if (validate_key(payload)) 
+            memcpy(g_key, payload, SEED_KEY_LENGTH);
+            if (validate_key(g_key)) 
+            {
                 parameterAccessGranted = true;
+            }
+            else
+            {
+                fallback_timeout_handler();
+            }
             break;
+            
         case 5: // Send seed
             generate_seed();
             send_lin_frame((LINFrame_t*)g_seed);
             break;
+            
+        case 6: // Commit all parameter to EEPROM 
+            if (currentMode == MODE_FACTORY)
+            {
+                if (!save_params_to_eeprom(&g_params))
+                {
+                    fallback_timeout_handler();
+                }
+            }
+            break;
+            
         default:
-            // Handle invalid command
+            fallback_timeout_handler();
             break;
     }
 }
@@ -290,7 +383,7 @@ void fallback_safe_reset(void)
 
 void fallback_timeout_handler(void)
 {
-    // Log fault
+    parameterAccessGranted = false;
 }
 
 /*******************************************************************************
@@ -311,10 +404,47 @@ ISR(USART0_RXC_vect)
     {
         index = 0;
         if (validate_lin_frame(buffer))
-            handle_command(buffer[7] & 0x07, &buffer[3]);
+        {
+            uint8_t cmd = buffer[7] & 0x07;
+            uint8_t paramID = (buffer[7] >> 5) & 0x07; 
+            
+            if (cmd == 1 && currentMode == MODE_FACTORY)
+            {
+                // Parameter write frame
+                uint8_t param_lengths[8] = {2, 1, 1, 4, 4, 4, 4, 4};
+                void* dest = ((uint8_t*)&g_params) + (paramID == 0 ? 0 : 
+                    paramID == 1 ? 2 :
+                    paramID == 2 ? 3 : 
+                    4 + (paramID - 3) * 4); // offsets into struct
+                
+                memcpy(dest, &buffer[3], param_lengths[paramID]);
+            }
+            else
+            {
+                handle_command(buffer);
+            }
+        }
         else 
             fallback_timeout_handler();
     }
+}
+
+ISR(PORTA_PORT_vect)
+{
+    if (PORTA.INTFLAGS & PIN1_bm)
+    {
+        syncErrorDetected = false;
+        TCA0.SINGLE.CNT = 0;
+        TCA0.SINGLE.CTRLA |= TCA_SINGLE_ENABLE_bm;
+        PORTA.INTFLAGS = PIN1_bm;
+    }
+}
+
+ISR(TCA0_OVF_vect)
+{
+    syncErrorDetected = true;
+    TCA0.SINGLE.CTRLA &= ~TCA_SINGLE_ENABLE_bm;
+    TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;
 }
 
 /*******************************************************************************
@@ -324,6 +454,9 @@ ISR(USART0_RXC_vect)
 void system_init(void)
 {
     cli();
+    TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV64_gc | TCA_SINGLE_ENABLE_bm;
+    TCA0.SINGLE.PER = 25;
+    TCA0.SINGLE.INTCTRL = TCA_SINGLE_OVF_bm;
     lin_pin_config();
     lin_usart_init();
     crcscan_init();
@@ -334,6 +467,13 @@ void system_init(void)
 int main(void)
 {
     system_init();
+    
+    // Enable interrupt on PORTA.PIN1 (LIN RX)
+    PORTA.PIN1CTRL = PORT_ISC_FALLING_gc;
+    PORTA.INTFLAGS = PIN1_bm;
+    
+    // Enable PORTA interrupt vector
+    VPORTA.INTFLAGS = PIN1_bm;
     
     while (1)
     {
