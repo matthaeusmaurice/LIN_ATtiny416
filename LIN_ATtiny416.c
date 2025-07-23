@@ -104,26 +104,33 @@ void fallback_timeout_handler(void);
  * 3. CRC-8 LIN
  ******************************************************************************/
 
-// Polynomial: x^8 + x^2 + x + 1 => 0x07
-uint8_t lin_crc8(uint8_t *data, uint8_t len)
+uint8_t crc8(const uint8_t *data, size_t length)
 {
-    uint8_t crc = 0x00;
-    for (uint8_t i = 0; i < len; i++)
+    uint8_t nCRC = 0U;
+    uint8_t i = 0U;
+    uint8_t bit = 0U;
+    
+    nCRC = 0xFFU;
+    
+    for (i = 0U; i < length; i++)
     {
-        crc ^= data[i];
-        for (uint8_t j = 0; j < 8; j++)
+        nCRC ^= data[i];
+        
+        for (bit = 0U; bit < 8U; bit++)
         {
-            if (crc &= 0x80)
+            if ((nCRC & ((uint8_t)0x80U)) != 0)
             {
-                crc = (crc << 1) ^ 0x07;
+                nCRC *= 2U;
+                
+                nCRC ^= (uint8_t)0x1DU;
             }
-            else 
+            else
             {
-                crc <<= 1;
+                nCRC *= 2U;
             }
         }
     }
-    return crc;
+    return nCRC ^ 0xFFU;
 }
 
 /*******************************************************************************
@@ -188,6 +195,14 @@ uint8_t uart_receive(void)
  * 6. LIN Frame Construction and Dispatch
  ******************************************************************************/
 
+uint8_t lin_checksum(uint8_t *data, uint8_t len)
+{
+    uint16_t sum = 0;
+    for (uint8_t i = 0; i < len; i++)
+        sum += data[i];
+    return ~(uint8_t)sum;
+}
+
 void check_lin_errors(void)
 {
     uint8_t status = USART0.RXDATAH;
@@ -201,17 +216,29 @@ bool validate_lin_frame(uint8_t *data)
     check_lin_errors();
     if (linErrors.frameError || linErrors.parityError || linErrors.bufferOverflow)
         return false;
-    return (lin_crc8(&data[3], 4) == data[0]);
+    return (crc8(&data[3], 4) == data[0]);
 }
 
 void send_lin_frame(LINFrame_t *frame)
 {
-    uint8_t raw[8] = {frame->crc, 0x00, 0x00, frame->payload[0], 
-        frame->payload[1], frame->payload[2], frame->payload[3], frame->status};
+    uint8_t raw[8] = {
+        frame->crc, 
+        0x00, 0x00, 
+        frame->payload[0], 
+        frame->payload[1], 
+        frame->payload[2], 
+        frame->payload[3], 
+        frame->status
+    };
+    
+    uint8_t lin_chk = lin_checksum(&raw[3], 5);
+    
     for (int i = 0; i < 8; i++)
     {
         uart_send(raw[i]);
     }
+    
+    uart_send(lin_chk);
 }
 
 void send_seed_frame(void)
@@ -220,7 +247,7 @@ void send_seed_frame(void)
     for (uint8_t i = 0; i < 4; i++)
         frame.payload[i] = g_seed[i];
     frame.status = 0x00; // Can define later if needed
-    frame.crc = lin_crc8(&frame.payload[0], 4);
+    frame.crc = crc8(&frame.payload[0], 4);
     send_lin_frame(&frame);
 }
 
@@ -311,7 +338,7 @@ void handle_command(uint8_t *frame)
                             (sign);
                     
                     tx.status = status;
-                    tx.crc = lin_crc8(tx.payload, 4);
+                    tx.crc = crc8(tx.payload, 4);
                     send_lin_frame(&tx);
                     _delay_ms(5);
                 }
